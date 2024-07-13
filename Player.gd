@@ -36,6 +36,9 @@ func _input(event: InputEvent) -> void:
   if event.is_action_released('move_right'):
     move_right = 0
     move_left = movement_map[move_left]
+  if event.is_action_pressed('move_action'):
+    var input_dir:Vector2 = Vector2(move_up - move_down, move_right - move_left)
+    sprite.transform = sprite.transform.looking_at(sprite.position + Vector3(input_dir.x, 0, input_dir.y))
 
 func _physics_process(delta: float) -> void:
   # Add the gravity.
@@ -51,7 +54,6 @@ func _physics_process(delta: float) -> void:
   # var input_dir:Vector2 = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
   var input_dir:Vector2 = Vector2(move_up - move_down, move_right - move_left)
   var direction:Vector3 = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-  sprite.transform = sprite.transform.looking_at(sprite.position + Vector3(input_dir.x, 0, input_dir.y))
   if direction:
     velocity.x = direction.x * SPEED
     velocity.z = direction.z * SPEED
