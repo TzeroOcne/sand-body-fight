@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3 uid="uid://bhisoboo4fruo"]
+
+[ext_resource type="Script" path="res://WorldCollision.gd" id="1_wesr5"]
+[ext_resource type="Texture2D" uid="uid://ca2ch08aikmmp" path="res://texture_08.png" id="2_ivehy"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_44s04"]
+size = Vector3(60, 2, 60)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rgs0w"]
+albedo_color = Color(1, 0, 0, 0.588235)
+albedo_texture = ExtResource("2_ivehy")
+uv1_scale = Vector3(10, 10, 10)
+point_size = 92.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_jr1p4"]
+material = SubResource("StandardMaterial3D_rgs0w")
+size = Vector3(60, 2, 60)
+
+[node name="World" type="Node3D"]
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+
+[node name="WorldCollision" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("BoxShape3D_44s04")
+script = ExtResource("1_wesr5")
+
+[node name="WorldMesh" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("BoxMesh_jr1p4")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.626849, 0.779141, 0, -0.779141, 0.626849, 0, 38.0963, 0)
+
+[connection signal="property_list_changed" from="Ground/WorldMesh" to="Ground/WorldCollision" method="_on_world_mesh_property_list_changed"]
