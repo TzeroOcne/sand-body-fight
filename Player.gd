@@ -1,5 +1,8 @@
 extends CharacterBody3D
 
+class_name Player
+
+@export var sprite:Sprite3D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -48,6 +51,7 @@ func _physics_process(delta: float) -> void:
   # var input_dir:Vector2 = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
   var input_dir:Vector2 = Vector2(move_up - move_down, move_right - move_left)
   var direction:Vector3 = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+  sprite.transform = sprite.transform.looking_at(sprite.position + Vector3(input_dir.x, 0, input_dir.y))
   if direction:
     velocity.x = direction.x * SPEED
     velocity.z = direction.z * SPEED
