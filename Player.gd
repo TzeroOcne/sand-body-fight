@@ -3,6 +3,7 @@ extends CharacterBody3D
 class_name Player
 
 @export var sprite:Sprite3D
+@export var air_speed: float = 1.0
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -15,38 +16,47 @@ var move_down:int = 0
 var move_left:int = 0
 var move_right:int = 0
 
+func is_moving() -> bool:
+  return move_up + move_down + move_left + move_right > 0
+
 func _input(event: InputEvent) -> void:
   if event.is_action_pressed('move_up'):
-    move_up += move_down + 1
+    move_up += min(2, move_down + 1)
   if event.is_action_released('move_up'):
     move_up = 0
     move_down = movement_map[move_down]
   if event.is_action_pressed('move_down'):
-    move_down += move_up + 1
+    move_down += min(2, move_up + 1)
   if event.is_action_released('move_down'):
     move_down = 0
     move_up = movement_map[move_up]
   if event.is_action_pressed('move_left'):
-    move_left += move_right + 1
+    move_left += min(2, move_right + 1)
   if event.is_action_released('move_left'):
     move_left = 0
     move_right = movement_map[move_right]
   if event.is_action_pressed('move_right'):
-    move_right += move_left + 1
+    move_right += min(2, move_left + 1)
   if event.is_action_released('move_right'):
     move_right = 0
     move_left = movement_map[move_left]
-  if event.is_action_pressed('move_action'):
+  if is_moving() && is_on_floor():
     var input_dir:Vector2 = Vector2(move_up - move_down, move_right - move_left)
     sprite.transform = sprite.transform.looking_at(sprite.position + Vector3(input_dir.x, 0, input_dir.y))
 
+func speed_multiplier() -> float:
+  return air_speed
+
 func _physics_process(delta: float) -> void:
   # Add the gravity.
-  if not is_on_floor():
+  if is_on_floor():
+    air_speed = 1
+  else:
+    air_speed = 0.8
     velocity.y -= gravity * delta
 
   # Handle jump.
-  if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+  if Input.is_action_pressed('move_jump') and is_on_floor():
     velocity.y = JUMP_VELOCITY
 
   # Get the input direction and handle the movement/deceleration.
@@ -55,8 +65,8 @@ func _physics_process(delta: float) -> void:
   var input_dir:Vector2 = Vector2(move_up - move_down, move_right - move_left)
   var direction:Vector3 = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
   if direction:
-    velocity.x = direction.x * SPEED
-    velocity.z = direction.z * SPEED
+    velocity.x = direction.x * SPEED * speed_multiplier()
+    velocity.z = direction.z * SPEED * speed_multiplier()
   else:
     velocity.x = move_toward(velocity.x, 0, SPEED)
     velocity.z = move_toward(velocity.z, 0, SPEED)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://u2b12x62dabv"]
+[gd_scene load_steps=8 format=3 uid="uid://u2b12x62dabv"]
 
 [ext_resource type="Script" path="res://Player.gd" id="1_ke7ix"]
 [ext_resource type="Texture2D" uid="uid://bb5vm7dqmd0b5" path="res://assets/character_malePerson_idle.png" id="2_x0q0f"]
@@ -11,20 +11,33 @@ albedo_color = Color(0.313726, 1, 0, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_170ny"]
 material = SubResource("StandardMaterial3D_e8eeo")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_2j471"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_rdo4y"]
+
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("sprite")]
 script = ExtResource("1_ke7ix")
 sprite = NodePath("Sprite3D")
 
 [node name="Pivot" type="Node3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="BodyCollision" type="CollisionShape3D" parent="."]
 visible = false
 shape = SubResource("BoxShape3D_extil")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-visible = false
+[node name="BodyShape" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_170ny")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
 texture = ExtResource("2_x0q0f")
+
+[node name="HitArea" type="CollisionShape3D" parent="Sprite3D"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -4.76454e-08, 0, 1.09)
+visible = false
+shape = SubResource("BoxShape3D_2j471")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Sprite3D"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, -1.11)
+mesh = SubResource("BoxMesh_rdo4y")
+skeleton = NodePath("../HitArea")
